@@ -1,26 +1,32 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-display: var(--font-literata);
+  --font-sans: var(--font-be-vietnam);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-paper: #faf6ec;
+  --color-paper-card: #fffdf6;
+  --color-ink: #20291f;
+  --color-ink-muted: #5b6358;
+  --color-pine: #1b6b4c;
+  --color-pine-dark: #12503a;
+  --color-seal: #c23b3b;
+  --color-rule: #afcbda;
+  --color-sand: #f1ead6;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+}
+
+/* Faint vở-ô-ly ruling: horizontal lines under the notebook card. */
+.notebook-ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 27px,
+    var(--color-rule) 27px,
+    var(--color-rule) 28px
+  );
+  background-attachment: local;
 }
