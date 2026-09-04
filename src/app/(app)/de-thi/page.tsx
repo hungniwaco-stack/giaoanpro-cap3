@@ -55,7 +55,7 @@ export default function DeThiPage() {
       const exam = { ...data, thoiGianLamBai } as ExamPlan;
       setLastExam(exam);
       addEntry("de-thi", exam.tenBai, exam);
-      if (!isVip) useTrial();
+      if (!isVip) useTrial("de-thi");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Đã có lỗi xảy ra");
     } finally {
@@ -74,7 +74,7 @@ export default function DeThiPage() {
     URL.revokeObjectURL(url);
   }
 
-  const left = trialsLeft();
+  const left = trialsLeft("de-thi");
 
   return (
     <main className="px-6 py-8 sm:px-10 sm:py-10">
@@ -160,7 +160,7 @@ export default function DeThiPage() {
             </button>
 
             <p className="mt-3 text-center text-xs text-ink-muted" suppressHydrationWarning>
-              {isVip ? "Tài khoản VIP — dùng không giới hạn" : `Còn ${left} lượt dùng thử miễn phí`}
+              {isVip ? "Tài khoản VIP — dùng không giới hạn" : `Còn ${left}/3 lượt dùng thử miễn phí cho mục này`}
             </p>
           </div>
         </div>

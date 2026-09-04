@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const trial = await checkTrial(ip);
+  const trial = await checkTrial(ip, "generate");
   if (!trial.allowed) {
     return NextResponse.json({ error: "trial_exhausted" }, { status: 402 });
   }
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     const text = response.text;
     if (!text) throw new Error("Gemini không trả về nội dung");
 
-    await consumeTrial(trial.uid, trial.ip);
+    await consumeTrial(trial.uid, trial.ip, "generate");
     // Trust our own inputs over whatever the model echoed back in the JSON —
     // it sometimes "corrects" these to match its own reading of the topic.
     return NextResponse.json({ ...JSON.parse(text), tenBai, monHoc, khoiLop });

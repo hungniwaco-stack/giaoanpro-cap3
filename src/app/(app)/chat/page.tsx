@@ -46,7 +46,7 @@ export default function ChatPage() {
       if (!res.ok) throw new Error(data.error ?? "Đã có lỗi xảy ra");
 
       setMessages([...next, { role: "model", content: data.reply }]);
-      if (!isVip) useTrial();
+      if (!isVip) useTrial("chat");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Đã có lỗi xảy ra");
       setMessages(messages);
@@ -55,7 +55,7 @@ export default function ChatPage() {
     }
   }
 
-  const left = trialsLeft();
+  const left = trialsLeft("chat");
 
   return (
     <main className="flex h-screen flex-col px-6 py-8 sm:px-10 sm:py-10">
@@ -111,7 +111,7 @@ export default function ChatPage() {
         </button>
       </div>
       <p className="mt-2 text-center text-xs text-ink-muted" suppressHydrationWarning>
-        {isVip ? "Tài khoản VIP — dùng không giới hạn" : `Còn ${left} lượt dùng thử miễn phí`}
+        {isVip ? "Tài khoản VIP — dùng không giới hạn" : `Còn ${left}/3 lượt dùng thử miễn phí cho mục này`}
       </p>
 
       {showPaywall && <ActivationModal onClose={() => setShowPaywall(false)} />}

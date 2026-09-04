@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const trial = await checkTrial(ip);
+  const trial = await checkTrial(ip, "bai-tap");
   if (!trial.allowed) {
     return NextResponse.json({ error: "trial_exhausted" }, { status: 402 });
   }
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     const text = response.text;
     if (!text) throw new Error("Gemini không trả về nội dung");
 
-    await consumeTrial(trial.uid, trial.ip);
+    await consumeTrial(trial.uid, trial.ip, "bai-tap");
     return NextResponse.json({ ...JSON.parse(text), tenBai, monHoc, khoiLop });
   } catch (err) {
     console.error("Gemini bai-tap error:", err);

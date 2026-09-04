@@ -2,16 +2,18 @@ import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
 import { redis } from "./redis";
 
-const FREE_TRIALS = 2;
+export type Feature = "generate" | "de-thi" | "bai-tap" | "chat";
+
+const FREE_TRIALS_PER_FEATURE = 3;
 const DAY_S = 60 * 60 * 24;
 const ENTRY_TTL_S = DAY_S * 400; // outlives the 1-year uid cookie
 const IP_WINDOW_S = DAY_S;
-const IP_DAILY_CAP = 6;
+const IP_DAILY_CAP = 36; // ~3 users' worth of the 12-trial (4 features x 3) quota per day
 
 const MAX_ACTIVATIONS_PER_CODE = 3;
 
 interface TrialEntry {
-  count: number;
+  counts: Partial<Record<Feature, number>>;
   activatedUntil: number | null;
 }
 
@@ -31,7 +33,7 @@ async function ensureUid() {
 }
 
 async function getTrialEntry(uid: string): Promise<TrialEntry> {
-  return (await redis.get<TrialEntry>(`trial:${uid}`)) ?? { count: 0, activatedUntil: null };
+  return (await redis.get<TrialEntry>(`trial:${uid}`)) ?? { counts: {}, activatedUntil: null };
 }
 
 async function getIpEntry(ip: string): Promise<IpEntry> {
@@ -45,25 +47,26 @@ async function getIpEntry(ip: string): Promise<IpEntry> {
 // Check quota WITHOUT spending it — call before the (possibly failing)
 // generation, then call consumeTrial only once it actually succeeds, so a
 // Gemini error or bad key doesn't burn the user's free/paid quota for nothing.
-export async function checkTrial(ip: string) {
+export async function checkTrial(ip: string, feature: Feature) {
   const uid = await ensureUid();
   const entry = await getTrialEntry(uid);
   const isVip = !!entry.activatedUntil && entry.activatedUntil > Date.now();
   if (isVip) return { allowed: true as const, uid, ip };
 
   const ipEntry = await getIpEntry(ip);
-  if (entry.count >= FREE_TRIALS || ipEntry.count >= IP_DAILY_CAP) {
+  const used = entry.counts[feature] ?? 0;
+  if (used >= FREE_TRIALS_PER_FEATURE || ipEntry.count >= IP_DAILY_CAP) {
     return { allowed: false as const, uid, ip };
   }
   return { allowed: true as const, uid, ip };
 }
 
-export async function consumeTrial(uid: string, ip: string) {
+export async function consumeTrial(uid: string, ip: string, feature: Feature) {
   const entry = await getTrialEntry(uid);
   const isVip = !!entry.activatedUntil && entry.activatedUntil > Date.now();
   if (isVip) return;
 
-  entry.count += 1;
+  entry.counts[feature] = (entry.counts[feature] ?? 0) + 1;
   await redis.set(`trial:${uid}`, entry, { ex: ENTRY_TTL_S });
 
   const ipEntry = await getIpEntry(ip);

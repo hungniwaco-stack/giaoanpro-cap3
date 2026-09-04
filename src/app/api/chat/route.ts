@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   }
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const trial = await checkTrial(ip);
+  const trial = await checkTrial(ip, "chat");
   if (!trial.allowed) {
     return NextResponse.json({ error: "trial_exhausted" }, { status: 402 });
   }
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const text = response.text;
     if (!text) throw new Error("Gemini không trả về nội dung");
 
-    await consumeTrial(trial.uid, trial.ip);
+    await consumeTrial(trial.uid, trial.ip, "chat");
     return NextResponse.json({ reply: text });
   } catch (err) {
     console.error("Gemini chat error:", err);
