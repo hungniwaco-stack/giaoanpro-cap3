@@ -37,7 +37,12 @@ function textCell(text: string, width: number) {
   });
 }
 
-export function generateLessonPlanDocx(plan: LessonPlan): Document {
+export interface TeacherInfo {
+  name: string;
+  school: string;
+}
+
+export function generateLessonPlanDocx(plan: LessonPlan, teacher?: TeacherInfo): Document {
   const activityRows = plan.hoatDong.flatMap((hd) => [
     new TableRow({
       children: [
@@ -74,6 +79,14 @@ export function generateLessonPlanDocx(plan: LessonPlan): Document {
               italics: true,
             })],
           }),
+          new Paragraph({
+            children: [new TextRun({
+              text: `Trường: ${teacher?.school || "......................................."}          Giáo viên: ${teacher?.name || "......................................."}`,
+            })],
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Ngày soạn: ..../..../........          Ngày dạy: ..../..../........" })],
+          }),
           new Paragraph({ text: "" }),
 
           new Paragraph({ heading: HeadingLevel.HEADING_2, text: "I. Mục tiêu" }),
@@ -92,6 +105,10 @@ export function generateLessonPlanDocx(plan: LessonPlan): Document {
             width: { size: 100, type: WidthType.PERCENTAGE },
             rows: activityRows,
           }),
+
+          new Paragraph({ text: "" }),
+          new Paragraph({ heading: HeadingLevel.HEADING_2, text: "IV. Điều chỉnh sau bài dạy" }),
+          new Paragraph({ text: "......................................................................................................" }),
         ],
       },
     ],

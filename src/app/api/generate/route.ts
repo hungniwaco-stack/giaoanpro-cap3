@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
-import { ai } from "@/lib/gemini";
+import { addHistoryEntry } from "@/lib/history-store";
+import { ai, GEMINI_MODEL } from "@/lib/gemini";
 import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const responseSchema = {
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: GEMINI_MODEL,
       contents: buildPrompt(monHoc, khoiLop, tenBai, trichDoanSgk),
       config: {
         responseMimeType: "application/json",
@@ -96,7 +97,9 @@ export async function POST(req: NextRequest) {
     await consumeTrial(trial.uid, trial.ip, "generate");
     // Trust our own inputs over whatever the model echoed back in the JSON —
     // it sometimes "corrects" these to match its own reading of the topic.
-    return NextResponse.json({ ...JSON.parse(text), tenBai, monHoc, khoiLop });
+    const result = { ...JSON.parse(text), tenBai, monHoc, khoiLop };
+    await addHistoryEntry(trial.uid, "giao-an", tenBai, result);
+    return NextResponse.json(result);
   } catch (err) {
     console.error("Gemini generate error:", err);
     return NextResponse.json({ error: "Không thể tạo giáo án lúc này, vui lòng thử lại" }, { status: 502 });

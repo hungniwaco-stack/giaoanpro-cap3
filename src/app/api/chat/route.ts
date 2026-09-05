@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
-import { ai } from "@/lib/gemini";
+import { ai, GEMINI_MODEL } from "@/lib/gemini";
 import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const SYSTEM_INSTRUCTION = `Bạn là trợ lý AI dành cho giáo viên THPT Việt Nam. Trả lời ngắn gọn, đúng chuyên môn sư phạm, bằng tiếng Việt. Có thể gợi ý hoạt động dạy học, giải thích khái niệm, hoặc góp ý cải thiện nội dung giáo viên đưa ra. Được dùng cú pháp Markdown (tiêu đề #, in đậm **, gạch đầu dòng) để trình bày rõ ràng. ${LATEX_INSTRUCTION}`;
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: GEMINI_MODEL,
       contents: messages.map((m: { role: "user" | "model"; content: string }) => ({
         role: m.role,
         parts: [{ text: m.content }],
