@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
 import { ai } from "@/lib/gemini";
+import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -52,6 +53,7 @@ Yêu cầu về nội dung:
 - Mục tiêu bài học chia rõ 3 nhóm: Kiến thức, Năng lực, Phẩm chất (mỗi nhóm 2-4 gạch đầu dòng, cụ thể, đo lường được).
 - Thiết bị dạy học và học liệu: liệt kê ngắn gọn, thực tế (SGK, máy chiếu, phiếu học tập, v.v.).
 - Tiến trình dạy học gồm đúng 4 hoạt động theo khung 5512: "Hoạt động 1: Mở đầu", "Hoạt động 2: Hình thành kiến thức mới", "Hoạt động 3: Luyện tập", "Hoạt động 4: Vận dụng". Mỗi hoạt động phải có đủ 4 phần: Mục tiêu, Nội dung, Sản phẩm, Tổ chức thực hiện — viết súc tích, đúng chuyên môn, có thể dùng ngay trên lớp.
+- ${LATEX_INSTRUCTION}
 
 Chỉ trả về JSON đúng theo schema đã cho, không thêm markdown, không thêm giải thích.`;
 }

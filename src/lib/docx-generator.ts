@@ -4,6 +4,7 @@ import {
 } from "docx";
 import type { LessonPlan, ExamPlan, ExercisePlan, CauHoiThi } from "./types";
 import { MUC_DO_LABEL, MUC_DO_ORDER } from "./types";
+import { latexToPlainText as t } from "./latex";
 
 function groupByMucDo<T extends CauHoiThi>(cauHoi: T[]) {
   return MUC_DO_ORDER.map((mucDo) => ({ mucDo, cauHoi: cauHoi.filter((c) => c.mucDo === mucDo) })).filter(
@@ -16,7 +17,7 @@ const cellBorders = { top: border, bottom: border, left: border, right: border }
 
 function bulletList(items: string[]) {
   return items.map(
-    (t) => new Paragraph({ text: t, bullet: { level: 0 } })
+    (item) => new Paragraph({ text: t(item), bullet: { level: 0 } })
   );
 }
 
@@ -32,7 +33,7 @@ function textCell(text: string, width: number) {
   return new TableCell({
     width: { size: width, type: WidthType.PERCENTAGE },
     borders: cellBorders,
-    children: text.split("\n").map((line) => new Paragraph(line)),
+    children: t(text).split("\n").map((line) => new Paragraph(line)),
   });
 }
 
@@ -119,9 +120,9 @@ export function generateExamDocx(exam: ExamPlan): Document {
       spacing: { before: 200 },
     }),
     ...cauHoi.flatMap((c) => {
-      const paras = [new Paragraph({ children: [new TextRun({ text: `Câu ${c.so}. ${c.noiDung}`, bold: true })] })];
+      const paras = [new Paragraph({ children: [new TextRun({ text: `Câu ${c.so}. ${t(c.noiDung)}`, bold: true })] })];
       if (c.loai === "trac_nghiem" && c.luaChon) {
-        paras.push(...c.luaChon.map((o) => new Paragraph({ text: o, indent: { left: 360 } })));
+        paras.push(...c.luaChon.map((o) => new Paragraph({ text: t(o), indent: { left: 360 } })));
       }
       paras.push(new Paragraph({ text: "" }));
       return paras;
@@ -129,7 +130,7 @@ export function generateExamDocx(exam: ExamPlan): Document {
   ]);
 
   const answerParagraphs = indexed.map(
-    (c) => new Paragraph({ children: [new TextRun({ text: `Câu ${c.so}: ${c.dapAn}` })] })
+    (c) => new Paragraph({ children: [new TextRun({ text: `Câu ${c.so}: ${t(c.dapAn)}` })] })
   );
 
   return new Document({
@@ -166,10 +167,10 @@ export function generateExamDocx(exam: ExamPlan): Document {
 
 export function generateExerciseDocx(ex: ExercisePlan): Document {
   const items = ex.baiTap.flatMap((b, i) => [
-    new Paragraph({ children: [new TextRun({ text: `Bài ${i + 1}. ${b.noiDung}` })] }),
+    new Paragraph({ children: [new TextRun({ text: `Bài ${i + 1}. ${t(b.noiDung)}` })] }),
     new Paragraph({ text: "" }),
   ]);
-  const answers = ex.baiTap.map((b, i) => new Paragraph({ text: `Bài ${i + 1}: ${b.dapAn}` }));
+  const answers = ex.baiTap.map((b, i) => new Paragraph({ text: `Bài ${i + 1}: ${t(b.dapAn)}` }));
 
   return new Document({
     sections: [

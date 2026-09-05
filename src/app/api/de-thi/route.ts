@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
 import { ai } from "@/lib/gemini";
+import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -43,6 +44,7 @@ ${nguLieuBlock}- Số câu hỏi: khoảng ${soCauhoi} câu, trộn cả trắc 
 - Mỗi câu đều phải có "dapAn" chính xác, súc tích.
 - BẮT BUỘC gắn "mucDo" cho MỌI câu theo đúng ma trận nhận thức chuẩn: khoảng 40% "nhan_biet", 30% "thong_hieu", 20% "van_dung", 10% "van_dung_cao". Đây không phải trường tuỳ chọn — thiếu ma trận mức độ là đề không đạt chuẩn nộp duyệt.
 - Sắp xếp câu hỏi tăng dần theo đúng thứ tự mức độ trên (Nhận biết → Thông hiểu → Vận dụng → Vận dụng cao).
+- ${LATEX_INSTRUCTION}
 
 Chỉ trả về JSON đúng theo schema đã cho, không thêm markdown, không thêm giải thích.`;
 }

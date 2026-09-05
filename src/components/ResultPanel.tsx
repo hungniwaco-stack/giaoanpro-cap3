@@ -2,6 +2,9 @@
 
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import StampSeal from "./StampSeal";
 
 export default function ResultPanel({
@@ -42,7 +45,9 @@ export default function ResultPanel({
       <div className="flex items-start gap-4 px-5 py-5">
         <StampSeal />
         <div className="markdown-body max-h-96 max-w-[720px] flex-1 overflow-auto text-sm text-ink-muted">
-          <Markdown remarkPlugins={[remarkGfm]}>{markdown}</Markdown>
+          <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+            {markdown}
+          </Markdown>
         </div>
       </div>
     </div>

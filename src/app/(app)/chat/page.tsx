@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 import { useAppStore } from "@/store/useAppStore";
 import ActivationModal from "@/components/ActivationModal";
 
@@ -80,7 +83,13 @@ export default function ChatPage() {
                 m.role === "user" ? "whitespace-pre-wrap bg-pine text-paper" : "markdown-body bg-sand text-ink"
               }`}
             >
-              {m.role === "model" ? <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown> : m.content}
+              {m.role === "model" ? (
+                <Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+                  {m.content}
+                </Markdown>
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}

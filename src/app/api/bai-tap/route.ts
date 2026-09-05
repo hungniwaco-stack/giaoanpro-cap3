@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
 import { ai } from "@/lib/gemini";
+import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -37,6 +38,7 @@ Hãy soạn một phiếu bài tập cho:
 - Chủ đề/bài: ${tenBai}
 ${nguLieuBlock}- Số lượng bài tập: khoảng ${soBai} bài, độ khó tăng dần từ cơ bản đến nâng cao.
 - Mỗi bài phải có "dapAn" chính xác, trình bày ngắn gọn.
+- ${LATEX_INSTRUCTION}
 
 Chỉ trả về JSON đúng theo schema đã cho, không thêm markdown, không thêm giải thích.`;
 }

@@ -1,5 +1,6 @@
 import pptxgen from "pptxgenjs";
 import type { LessonPlan, ExamPlan, ExercisePlan } from "./types";
+import { latexToPlainText } from "./latex";
 
 // ponytail: bảng màu + font tối giản (tối đa 3 màu, 1 font duy nhất) và đường
 // kẻ chia dưới tiêu đề — theo nguyên tắc trình bày academic-pptx-skill
@@ -47,7 +48,7 @@ function addBulletSlide(pptx: pptxgen, heading: string, bullets: string[]) {
     x: MARGIN, y: 1.0, w: 8.8, h: 0.02, fill: { color: RULE },
   });
   slide.addText(
-    bullets.filter(Boolean).map((b) => ({ text: b, options: { bullet: true, breakLine: true } })),
+    bullets.filter(Boolean).map((b) => ({ text: latexToPlainText(b), options: { bullet: true, breakLine: true } })),
     { x: MARGIN, y: 1.25, w: 8.8, h: 4, fontFace: FONT, fontSize: 16, color: INK, valign: "top", paraSpaceAfter: 8 }
   );
 }
