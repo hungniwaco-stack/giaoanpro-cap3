@@ -18,8 +18,20 @@ export interface LessonPlan {
   hoatDong: HoatDong[];
 }
 
+export type MucDo = "nhan_biet" | "thong_hieu" | "van_dung" | "van_dung_cao";
+
+export const MUC_DO_LABEL: Record<MucDo, string> = {
+  nhan_biet: "Nhận biết",
+  thong_hieu: "Thông hiểu",
+  van_dung: "Vận dụng",
+  van_dung_cao: "Vận dụng cao",
+};
+
+export const MUC_DO_ORDER: MucDo[] = ["nhan_biet", "thong_hieu", "van_dung", "van_dung_cao"];
+
 export interface CauHoiThi {
   loai: "trac_nghiem" | "tu_luan";
+  mucDo: MucDo;
   noiDung: string;
   luaChon?: string[];
   dapAn: string;

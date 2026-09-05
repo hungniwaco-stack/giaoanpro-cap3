@@ -10,6 +10,7 @@ import type { ExercisePlan } from "@/lib/types";
 import ActivationModal from "@/components/ActivationModal";
 import ResultPanel from "@/components/ResultPanel";
 import EmptyResult from "@/components/EmptyResult";
+import CharCounter from "@/components/CharCounter";
 
 const KHOI_LOP = ["10", "11", "12"];
 const MON_HOC = [
@@ -19,11 +20,12 @@ const MON_HOC = [
 ];
 
 export default function BaiTapPage() {
-  const { trialsLeft, isVip, useTrial } = useAppStore();
+  const { trialsLeft, isVip, useTrial, canExport, useExport } = useAppStore();
   const addEntry = useHistoryStore((s) => s.addEntry);
   const [khoiLop, setKhoiLop] = useState(KHOI_LOP[0]);
   const [monHoc, setMonHoc] = useState(MON_HOC[0]);
   const [tenBai, setTenBai] = useState("");
+  const [nguLieu, setNguLieu] = useState("");
   const [soBai, setSoBai] = useState(8);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,13 @@ export default function BaiTapPage() {
       const res = await fetch("/api/bai-tap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ khoiLop: `Lớp ${khoiLop}`, monHoc, tenBai, soBai }),
+        body: JSON.stringify({
+          khoiLop: `Lớp ${khoiLop}`,
+          monHoc,
+          tenBai,
+          soBai,
+          nguLieu: nguLieu.trim() || undefined,
+        }),
       });
 
       if (res.status === 402) {
@@ -73,6 +81,15 @@ export default function BaiTapPage() {
     URL.revokeObjectURL(url);
   }
 
+  function handleExport(run: () => void) {
+    if (!isVip && !canExport("bai-tap")) {
+      setShowPaywall(true);
+      return;
+    }
+    if (!isVip) useExport("bai-tap");
+    run();
+  }
+
   const left = trialsLeft("bai-tap");
 
   return (
@@ -82,7 +99,7 @@ export default function BaiTapPage() {
         Sinh phiếu bài tập luyện tập kèm đáp án, độ khó tăng dần, xuất Word ngay.
       </p>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_minmax(0,720px)]">
         <div className="relative overflow-hidden rounded-2xl border border-ink/10 bg-paper-card shadow-sm">
           <div className="notebook-ruled absolute inset-0 opacity-40" />
           <div className="absolute inset-y-0 left-10 w-px bg-seal/50" />
@@ -126,6 +143,21 @@ export default function BaiTapPage() {
             </div>
 
             <div className="mt-4">
+              <label className="text-sm text-ink-muted">
+                Ngữ liệu / dạng bài tham khảo <span className="text-ink-muted/60">(tuỳ chọn)</span>
+              </label>
+              <textarea
+                value={nguLieu}
+                onChange={(e) => setNguLieu(e.target.value.slice(0, 4000))}
+                maxLength={4000}
+                rows={3}
+                placeholder="Dán nội dung/dạng bài tham khảo để AI bám sát hơn..."
+                className="mt-1 w-full resize-none rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-muted/50 outline-none focus:border-pine"
+              />
+              <CharCounter length={nguLieu.length} max={4000} />
+            </div>
+
+            <div className="mt-4">
               <label className="text-sm text-ink-muted">Số lượng bài tập</label>
               <input
                 type="number"
@@ -157,8 +189,13 @@ export default function BaiTapPage() {
           <ResultPanel
             title="Chi Tiết Phiếu Bài Tập"
             markdown={exerciseToMarkdown(lastExercise)}
-            onDownloadDocx={() => downloadDocx(lastExercise)}
-            onDownloadPptx={() => downloadPptx(generateExercisePptx(lastExercise), `Bai-tap-${lastExercise.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)}
+            onDownloadDocx={() => handleExport(() => downloadDocx(lastExercise))}
+            onDownloadPptx={() =>
+              handleExport(() =>
+                downloadPptx(generateExercisePptx(lastExercise), `Bai-tap-${lastExercise.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)
+              )
+            }
+            locked={!isVip && !canExport("bai-tap")}
           />
         ) : (
           <EmptyResult text="Điền thông tin bên trái và bấm Tạo bài tập để xem kết quả tại đây." />

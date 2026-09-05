@@ -2,7 +2,14 @@ import {
   Document, Packer, Paragraph, Table, TableRow, TableCell,
   TextRun, HeadingLevel, WidthType, AlignmentType, BorderStyle,
 } from "docx";
-import type { LessonPlan, ExamPlan, ExercisePlan } from "./types";
+import type { LessonPlan, ExamPlan, ExercisePlan, CauHoiThi } from "./types";
+import { MUC_DO_LABEL, MUC_DO_ORDER } from "./types";
+
+function groupByMucDo<T extends CauHoiThi>(cauHoi: T[]) {
+  return MUC_DO_ORDER.map((mucDo) => ({ mucDo, cauHoi: cauHoi.filter((c) => c.mucDo === mucDo) })).filter(
+    (g) => g.cauHoi.length > 0
+  );
+}
 
 const border = { style: BorderStyle.SINGLE, size: 2, color: "999999" };
 const cellBorders = { top: border, bottom: border, left: border, right: border };
@@ -91,17 +98,38 @@ export function generateLessonPlanDocx(plan: LessonPlan): Document {
 }
 
 export function generateExamDocx(exam: ExamPlan): Document {
-  const questionParagraphs = exam.cauHoi.flatMap((c, i) => {
-    const paras = [new Paragraph({ children: [new TextRun({ text: `Câu ${i + 1}. ${c.noiDung}`, bold: true })] })];
-    if (c.loai === "trac_nghiem" && c.luaChon) {
-      paras.push(...c.luaChon.map((o) => new Paragraph({ text: o, indent: { left: 360 } })));
-    }
-    paras.push(new Paragraph({ text: "" }));
-    return paras;
-  });
+  const indexed = exam.cauHoi.map((c, i) => ({ ...c, so: i + 1 }));
+  const groups = groupByMucDo(indexed);
 
-  const answerParagraphs = exam.cauHoi.map(
-    (c, i) => new Paragraph({ children: [new TextRun({ text: `Câu ${i + 1}: ${c.dapAn}` })] })
+  const matrixRows = [
+    new TableRow({
+      children: [labeledCell("Mức độ", 70), labeledCell("Số câu", 30)],
+    }),
+    ...groups.map(
+      (g) =>
+        new TableRow({
+          children: [textCell(MUC_DO_LABEL[g.mucDo], 70), textCell(String(g.cauHoi.length), 30)],
+        })
+    ),
+  ];
+
+  const questionParagraphs = groups.flatMap(({ mucDo, cauHoi }) => [
+    new Paragraph({
+      children: [new TextRun({ text: `Mức độ: ${MUC_DO_LABEL[mucDo]}`, bold: true, italics: true })],
+      spacing: { before: 200 },
+    }),
+    ...cauHoi.flatMap((c) => {
+      const paras = [new Paragraph({ children: [new TextRun({ text: `Câu ${c.so}. ${c.noiDung}`, bold: true })] })];
+      if (c.loai === "trac_nghiem" && c.luaChon) {
+        paras.push(...c.luaChon.map((o) => new Paragraph({ text: o, indent: { left: 360 } })));
+      }
+      paras.push(new Paragraph({ text: "" }));
+      return paras;
+    }),
+  ]);
+
+  const answerParagraphs = indexed.map(
+    (c) => new Paragraph({ children: [new TextRun({ text: `Câu ${c.so}: ${c.dapAn}` })] })
   );
 
   return new Document({
@@ -123,6 +151,9 @@ export function generateExamDocx(exam: ExamPlan): Document {
               italics: true,
             })],
           }),
+          new Paragraph({ text: "" }),
+          new Paragraph({ heading: HeadingLevel.HEADING_2, text: "Ma trận mức độ nhận thức" }),
+          new Table({ width: { size: 60, type: WidthType.PERCENTAGE }, rows: matrixRows }),
           new Paragraph({ text: "" }),
           ...questionParagraphs,
           new Paragraph({ heading: HeadingLevel.HEADING_2, text: "ĐÁP ÁN" }),

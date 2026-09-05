@@ -10,6 +10,7 @@ import type { LessonPlan } from "@/lib/types";
 import ActivationModal from "@/components/ActivationModal";
 import ResultPanel from "@/components/ResultPanel";
 import EmptyResult from "@/components/EmptyResult";
+import CharCounter from "@/components/CharCounter";
 
 const KHOI_LOP = ["10", "11", "12"];
 const MON_HOC = [
@@ -19,7 +20,7 @@ const MON_HOC = [
 ];
 
 export default function GiaoAnPage() {
-  const { trialsLeft, isVip, useTrial } = useAppStore();
+  const { trialsLeft, isVip, useTrial, canExport, useExport } = useAppStore();
   const addEntry = useHistoryStore((s) => s.addEntry);
   const [khoiLop, setKhoiLop] = useState(KHOI_LOP[0]);
   const [monHoc, setMonHoc] = useState(MON_HOC[0]);
@@ -78,6 +79,17 @@ export default function GiaoAnPage() {
     URL.revokeObjectURL(url);
   }
 
+  // Xem preview không giới hạn theo lượt tạo — chỉ chặn ở đúng lúc xuất file,
+  // đúng lúc giáo viên đã thấy giá trị và muốn mang ra khỏi màn hình.
+  function handleExport(run: () => void) {
+    if (!isVip && !canExport("generate")) {
+      setShowPaywall(true);
+      return;
+    }
+    if (!isVip) useExport("generate");
+    run();
+  }
+
   const left = trialsLeft("generate");
 
   return (
@@ -87,7 +99,7 @@ export default function GiaoAnPage() {
         Chọn lớp, môn, tên bài — AI soạn giáo án đúng khung Công văn 5512, xuất Word ngay.
       </p>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_minmax(0,720px)]">
         <div className="relative overflow-hidden rounded-2xl border border-ink/10 bg-paper-card shadow-sm">
           <div className="notebook-ruled absolute inset-0 opacity-40" />
           <div className="absolute inset-y-0 left-10 w-px bg-seal/50" />
@@ -136,12 +148,13 @@ export default function GiaoAnPage() {
               </label>
               <textarea
                 value={trichDoanSgk}
-                onChange={(e) => setTrichDoanSgk(e.target.value)}
+                onChange={(e) => setTrichDoanSgk(e.target.value.slice(0, 4000))}
                 maxLength={4000}
                 rows={3}
                 placeholder="Dán nội dung bài học từ SGK để AI bám sát hơn..."
                 className="mt-1 w-full resize-none rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-muted/50 outline-none focus:border-pine"
               />
+              <CharCounter length={trichDoanSgk.length} max={4000} />
             </div>
 
             {error && <p className="mt-3 text-sm text-seal">{error}</p>}
@@ -164,8 +177,13 @@ export default function GiaoAnPage() {
           <ResultPanel
             title="Chi Tiết Giáo Án"
             markdown={lessonPlanToMarkdown(lastPlan)}
-            onDownloadDocx={() => downloadDocx(lastPlan)}
-            onDownloadPptx={() => downloadPptx(generateLessonPlanPptx(lastPlan), `Giao-an-${lastPlan.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)}
+            onDownloadDocx={() => handleExport(() => downloadDocx(lastPlan))}
+            onDownloadPptx={() =>
+              handleExport(() =>
+                downloadPptx(generateLessonPlanPptx(lastPlan), `Giao-an-${lastPlan.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)
+              )
+            }
+            locked={!isVip && !canExport("generate")}
           />
         ) : (
           <EmptyResult text="Điền thông tin bên trái và bấm Soạn giáo án để xem kết quả tại đây." />

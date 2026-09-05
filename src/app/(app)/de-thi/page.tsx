@@ -10,6 +10,7 @@ import type { ExamPlan } from "@/lib/types";
 import ActivationModal from "@/components/ActivationModal";
 import ResultPanel from "@/components/ResultPanel";
 import EmptyResult from "@/components/EmptyResult";
+import CharCounter from "@/components/CharCounter";
 
 const KHOI_LOP = ["10", "11", "12"];
 const MON_HOC = [
@@ -19,11 +20,12 @@ const MON_HOC = [
 ];
 
 export default function DeThiPage() {
-  const { trialsLeft, isVip, useTrial } = useAppStore();
+  const { trialsLeft, isVip, useTrial, canExport, useExport } = useAppStore();
   const addEntry = useHistoryStore((s) => s.addEntry);
   const [khoiLop, setKhoiLop] = useState(KHOI_LOP[0]);
   const [monHoc, setMonHoc] = useState(MON_HOC[0]);
   const [tenBai, setTenBai] = useState("");
+  const [nguLieu, setNguLieu] = useState("");
   const [thoiGianLamBai, setThoiGianLamBai] = useState("45 phút");
   const [soCauhoi, setSoCauhoi] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -42,7 +44,13 @@ export default function DeThiPage() {
       const res = await fetch("/api/de-thi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ khoiLop: `Lớp ${khoiLop}`, monHoc, tenBai, soCauhoi }),
+        body: JSON.stringify({
+          khoiLop: `Lớp ${khoiLop}`,
+          monHoc,
+          tenBai,
+          soCauhoi,
+          nguLieu: nguLieu.trim() || undefined,
+        }),
       });
 
       if (res.status === 402) {
@@ -74,6 +82,15 @@ export default function DeThiPage() {
     URL.revokeObjectURL(url);
   }
 
+  function handleExport(run: () => void) {
+    if (!isVip && !canExport("de-thi")) {
+      setShowPaywall(true);
+      return;
+    }
+    if (!isVip) useExport("de-thi");
+    run();
+  }
+
   const left = trialsLeft("de-thi");
 
   return (
@@ -83,7 +100,7 @@ export default function DeThiPage() {
         Ra đề kiểm tra trộn trắc nghiệm + tự luận, kèm đáp án, xuất Word ngay.
       </p>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_minmax(0,720px)]">
         <div className="relative overflow-hidden rounded-2xl border border-ink/10 bg-paper-card shadow-sm">
           <div className="notebook-ruled absolute inset-0 opacity-40" />
           <div className="absolute inset-y-0 left-10 w-px bg-seal/50" />
@@ -124,6 +141,21 @@ export default function DeThiPage() {
                 placeholder="Ví dụ: Chương 2 - Dao động cơ"
                 className="mt-1 w-full rounded-lg border border-ink/15 bg-white px-3 py-2 text-ink placeholder:text-ink-muted/50 outline-none focus:border-pine"
               />
+            </div>
+
+            <div className="mt-4">
+              <label className="text-sm text-ink-muted">
+                Ngữ liệu / phạm vi kiểm tra <span className="text-ink-muted/60">(tuỳ chọn)</span>
+              </label>
+              <textarea
+                value={nguLieu}
+                onChange={(e) => setNguLieu(e.target.value.slice(0, 4000))}
+                maxLength={4000}
+                rows={3}
+                placeholder="Dán nội dung/dạng đề tham khảo để AI bám sát hơn..."
+                className="mt-1 w-full resize-none rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-muted/50 outline-none focus:border-pine"
+              />
+              <CharCounter length={nguLieu.length} max={4000} />
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-4">
@@ -169,8 +201,13 @@ export default function DeThiPage() {
           <ResultPanel
             title="Chi Tiết Đề Kiểm Tra"
             markdown={examToMarkdown(lastExam)}
-            onDownloadDocx={() => downloadDocx(lastExam)}
-            onDownloadPptx={() => downloadPptx(generateExamPptx(lastExam), `De-kiem-tra-${lastExam.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)}
+            onDownloadDocx={() => handleExport(() => downloadDocx(lastExam))}
+            onDownloadPptx={() =>
+              handleExport(() =>
+                downloadPptx(generateExamPptx(lastExam), `De-kiem-tra-${lastExam.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)
+              )
+            }
+            locked={!isVip && !canExport("de-thi")}
           />
         ) : (
           <EmptyResult text="Điền thông tin bên trái và bấm Tạo đề kiểm tra để xem kết quả tại đây." />

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useAppStore } from "@/store/useAppStore";
 import ActivationModal from "@/components/ActivationModal";
 
@@ -74,11 +76,11 @@ export default function ChatPage() {
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
-              className={`max-w-lg whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm ${
-                m.role === "user" ? "bg-pine text-paper" : "bg-sand text-ink"
+              className={`max-w-lg rounded-2xl px-4 py-2.5 text-sm ${
+                m.role === "user" ? "whitespace-pre-wrap bg-pine text-paper" : "markdown-body bg-sand text-ink"
               }`}
             >
-              {m.content}
+              {m.role === "model" ? <Markdown remarkPlugins={[remarkGfm]}>{m.content}</Markdown> : m.content}
             </div>
           </div>
         ))}

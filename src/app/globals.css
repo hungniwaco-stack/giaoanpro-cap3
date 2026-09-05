@@ -30,3 +30,71 @@ body {
   );
   background-attachment: local;
 }
+
+/* Styling cho nội dung Markdown do AI sinh ra (giáo án/đề thi/bài tập/chat) — thay cho hiển thị raw text. */
+.markdown-body h1 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-bottom: 0.5rem;
+}
+.markdown-body h2 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+}
+.markdown-body h3 {
+  font-weight: 700;
+  color: var(--color-pine-dark);
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+.markdown-body p {
+  margin-bottom: 0.5rem;
+}
+.markdown-body strong {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.markdown-body ul,
+.markdown-body ol {
+  margin: 0.25rem 0 0.75rem 1.25rem;
+}
+.markdown-body ul {
+  list-style: disc;
+}
+.markdown-body ol {
+  list-style: decimal;
+}
+.markdown-body li {
+  margin-bottom: 0.2rem;
+}
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 1rem;
+  font-size: 0.85em;
+}
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+.markdown-body th {
+  background: var(--color-sand);
+  font-weight: 700;
+}
+.markdown-body code {
+  background: var(--color-sand);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.9em;
+}
