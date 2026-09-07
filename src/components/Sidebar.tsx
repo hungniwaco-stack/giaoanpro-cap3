@@ -75,7 +75,7 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
           </span>
         </Link>
 
-        <p className="mt-8 px-2 text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted/70">
+        <p className="mt-8 px-2 text-xs font-bold uppercase tracking-[0.15em] text-ink-muted">
           Chức năng chính
         </p>
         <nav className="mt-2 flex flex-col gap-1">
@@ -84,7 +84,7 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
           ))}
         </nav>
 
-        <p className="mt-6 px-2 text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted/70">
+        <p className="mt-6 px-2 text-xs font-bold uppercase tracking-[0.15em] text-ink-muted">
           Quản lý
         </p>
         <nav className="mt-2 flex flex-col gap-1">
