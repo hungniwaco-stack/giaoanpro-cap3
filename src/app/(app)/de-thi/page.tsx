@@ -100,7 +100,7 @@ export default function DeThiPage() {
         Ra đề kiểm tra trộn trắc nghiệm + tự luận, kèm đáp án, xuất Word ngay.
       </p>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_minmax(0,720px)]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]">
         <div className="relative overflow-hidden rounded-2xl border border-ink/10 bg-paper-card shadow-sm">
           <div className="notebook-ruled absolute inset-0 opacity-40" />
           <div className="absolute inset-y-0 left-10 w-px bg-seal/50" />
