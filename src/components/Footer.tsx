@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-const SUPPORT_EMAIL = "hotro@example.com"; // ponytail: thay bằng email hỗ trợ thật
-const ZALO_LINK = "https://zalo.me/"; // ponytail: thay bằng link Zalo thật
+const SUPPORT_EMAIL = "hungniwaco@gmail.com";
+const ZALO_LINK = "https://zalo.me/0944851719";
 
 export default function Footer() {
   return (
