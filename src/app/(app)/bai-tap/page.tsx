@@ -96,7 +96,7 @@ export default function BaiTapPage() {
     <main className="px-6 py-8 sm:px-10 sm:py-10">
       <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">Tạo Bài Tập</h1>
       <p className="mt-1 text-sm text-ink-muted">
-        Sinh phiếu bài tập luyện tập kèm đáp án, độ khó tăng dần, xuất Word ngay.
+        Sinh phiếu bài tập luyện tập kèm đáp án, độ khó tăng dần, xuất Word & PPT ngay.
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]">

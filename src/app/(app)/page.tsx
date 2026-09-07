@@ -98,7 +98,7 @@ export default function GiaoAnPage() {
     <main className="px-6 py-8 sm:px-10 sm:py-10">
       <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">Soạn Giáo Án Chi Tiết</h1>
       <p className="mt-1 text-sm text-ink-muted">
-        Chọn lớp, môn, tên bài — AI soạn giáo án đúng khung Công văn 5512, xuất Word ngay.
+        Chọn lớp, môn, tên bài — AI soạn giáo án đúng khung Công văn 5512, xuất Word & PPT ngay.
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[380px_1fr]">
