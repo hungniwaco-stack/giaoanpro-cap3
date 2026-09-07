@@ -80,9 +80,15 @@ export async function POST(req: NextRequest) {
     const text = response.text;
     if (!text) throw new Error("Gemini không trả về nội dung");
 
-    await consumeTrial(trial.uid, trial.ip, "bai-tap");
     const result = { ...JSON.parse(text), tenBai, monHoc, khoiLop };
-    await addHistoryEntry(trial.uid, "bai-tap", tenBai, result);
+    // Chỉ tiêu lượt dùng thử SAU khi chắc chắn có kết quả hợp lệ — JSON lỗi
+    // định dạng (Gemini bị cắt giữa chừng) không được phép trừ lượt của khách.
+    await consumeTrial(trial.uid, trial.ip, "bai-tap");
+    try {
+      await addHistoryEntry(trial.uid, "bai-tap", tenBai, result);
+    } catch (err) {
+      console.error("Lưu lịch sử thất bại:", err);
+    }
     return NextResponse.json(result);
   } catch (err) {
     console.error("Gemini bai-tap error:", err);

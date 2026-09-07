@@ -49,7 +49,18 @@ export const useAppStore = create<AppState>()(
         return (s.exportsUsed[feature] ?? 0) < FREE_EXPORTS_PER_FEATURE;
       },
     }),
-    { name: "giao-an-pro-storage" }
+    {
+      name: "giao-an-pro-storage",
+      // isVip tự lưu trong localStorage nhưng không tự hết hạn — nếu không sửa
+      // lại ở đây, sau khi gói hết hạn thật (server đã chặn đúng ở /api/*),
+      // các trang vẫn dùng "isVip" thô (không qua isActiveVip) để khoá/mở khoá
+      // canExport, khiến khách hết hạn vẫn xuất file không giới hạn mãi mãi.
+      onRehydrateStorage: () => (state) => {
+        if (state?.isVip && (!state.vipExpiresAt || state.vipExpiresAt <= Date.now())) {
+          state.isVip = false;
+        }
+      },
+    }
   )
 );
 

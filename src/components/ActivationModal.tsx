@@ -4,14 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
+import { PLAN_LABEL, PLAN_PRICE_VND, type Plan } from "@/lib/plans";
 
-const PLANS = [
-  { id: "1M", label: "1 Tháng", price: "99.000đ", highlight: false },
-  { id: "6M", label: "6 Tháng", price: "399.000đ", highlight: true },
-  { id: "1Y", label: "1 Năm", price: "599.000đ", highlight: false },
-];
+const PLAN_IDS: Plan[] = ["1M", "6M", "1Y"];
+const HIGHLIGHT_PLAN: Plan = "6M";
 
-const ZALO_LINK = "https://zalo.me/"; // ponytail: thay bằng link Zalo thật của bạn
+const ZALO_LINK = "https://zalo.me/0944851719";
 
 export default function ActivationModal({ onClose }: { onClose: () => void }) {
   const activate = useAppStore((s) => s.activate);
@@ -59,22 +57,22 @@ export default function ActivationModal({ onClose }: { onClose: () => void }) {
           </p>
 
           <div className="mt-4 grid grid-cols-3 gap-3">
-            {PLANS.map((p) => (
+            {PLAN_IDS.map((id) => (
               <div
-                key={p.id}
+                key={id}
                 className={`rounded-xl border p-3 text-center ${
-                  p.highlight
+                  id === HIGHLIGHT_PLAN
                     ? "border-pine bg-pine/10"
                     : "border-ink/10 bg-sand/50"
                 }`}
               >
-                {p.highlight && (
+                {id === HIGHLIGHT_PLAN && (
                   <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-pine-dark">
                     Bán chạy
                   </div>
                 )}
-                <div className="text-sm text-ink-muted">{p.label}</div>
-                <div className="mt-1 font-semibold text-ink">{p.price}</div>
+                <div className="text-sm text-ink-muted">{PLAN_LABEL[id]}</div>
+                <div className="mt-1 font-semibold text-ink">{PLAN_PRICE_VND[id].toLocaleString("vi-VN")}đ</div>
               </div>
             ))}
           </div>
