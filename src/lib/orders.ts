@@ -14,7 +14,10 @@ export interface Order {
   paidAt?: number;
 }
 
-const ORDER_TTL_S = 60 * 60 * 24; // đơn chưa thanh toán tự hết hạn sau 1 ngày
+// 3 ngày — đủ để bao chuyển khoản liên ngân hàng bị trễ (cuối tuần, ngày lễ).
+// 1 ngày là quá ngắn: tiền vào sau khi đơn đã hết hạn thì webhook sẽ không
+// tìm thấy đơn để kích hoạt (mất tiền một cách âm thầm), nên để dư hơn là thiếu.
+const ORDER_TTL_S = 60 * 60 * 24 * 3;
 
 function genRefCode(): string {
   // "GA" + 6 ký tự hex viết hoa — ngắn, gõ tay được nếu quét QR lỗi, và

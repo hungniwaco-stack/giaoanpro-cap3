@@ -178,6 +178,13 @@ export default function NangCapPage() {
             <span className="h-2 w-2 animate-pulse rounded-full bg-pine" />
             Đang chờ thanh toán...
           </div>
+          <p className="mt-4 text-xs text-ink-muted">
+            Đã chuyển khoản quá 5 phút chưa thấy kích hoạt? Liên hệ Zalo/điện thoại{" "}
+            <a href="https://zalo.me/0944851719" target="_blank" rel="noopener noreferrer" className="font-medium text-pine hover:text-pine-dark">
+              0944 851719
+            </a>{" "}
+            kèm mã <span className="font-semibold text-ink">{order.refCode}</span> để được kích hoạt tay.
+          </p>
         </div>
       )}
     </main>

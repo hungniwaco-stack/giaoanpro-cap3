@@ -28,10 +28,17 @@ export async function POST(req: NextRequest) {
   const amount: number = Number(body.transferAmount) || 0;
 
   const refCode = extractRefCode(content);
-  if (!refCode) return NextResponse.json({ ok: true });
+  if (!refCode) {
+    console.error(`SePay webhook: không tách được mã đơn từ nội dung "${content}" (tiền vào ${amount}đ) — cần đối soát tay`);
+    return NextResponse.json({ ok: true });
+  }
 
   const order = await getOrder(refCode);
-  if (!order || order.status === "paid") return NextResponse.json({ ok: true });
+  if (order?.status === "paid") return NextResponse.json({ ok: true });
+  if (!order) {
+    console.error(`SePay webhook: không tìm thấy đơn ${refCode} (tiền vào ${amount}đ, nội dung "${content}") — đơn có thể đã hết hạn, cần đối soát tay`);
+    return NextResponse.json({ ok: true });
+  }
 
   if (amount < order.amount) {
     console.error(`SePay webhook: đơn ${refCode} nhận thiếu tiền (${amount}/${order.amount}) — cần xử lý tay`);
