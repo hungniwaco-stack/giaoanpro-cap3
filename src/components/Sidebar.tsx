@@ -55,6 +55,9 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
         <Link href="/" onClick={onClose} className="flex items-center gap-2 px-2">
           <span className="font-display text-xl font-semibold text-pine">✎ AI Giáo Án Pro</span>
         </Link>
+        <a href="https://giaoanpro.com" className="mt-1 px-2 text-xs text-ink-muted hover:text-pine-dark">
+          ← Về Trang chủ
+        </a>
 
         <Link
           href="/cau-hinh"
