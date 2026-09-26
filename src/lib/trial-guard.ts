@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
 import { redis } from "./redis";
 
-export type Feature = "generate" | "de-thi" | "bai-tap" | "chat";
+export type Feature = "generate" | "de-thi" | "bai-tap" | "chat" | "phan-tich";
 
 const FREE_TRIALS_PER_FEATURE = 3;
 const DAY_S = 60 * 60 * 24;

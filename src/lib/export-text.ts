@@ -15,6 +15,8 @@ export function lessonPlanToMarkdown(p: LessonPlan): string {
   return `# ${p.tenBai}
 **Môn:** ${p.monHoc} — **Lớp:** ${p.khoiLop} — **Thời lượng:** ${p.thoiLuong}
 
+**Ngày soạn:** ..../..../........ — **Tổng số tiết:** ........ — **Tiết:** ........
+
 ## I. Mục tiêu
 **1. Kiến thức**
 ${bullets(p.mucTieuKienThuc)}
@@ -38,6 +40,8 @@ ${p.hoatDong
 - **Tổ chức thực hiện:** ${hd.toChucThucHien}`
   )
   .join("\n\n")}
+
+**Duyệt của CM trường** — **Duyệt của Tổ trưởng** — **Giáo viên**
 `;
 }
 

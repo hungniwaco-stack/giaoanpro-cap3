@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useHistoryStore } from "@/store/useHistoryStore";
+import { useProfileStore } from "@/store/useProfileStore";
 import { generateLessonPlanDocx, generateExamDocx, generateExerciseDocx, docxToBlob } from "@/lib/docx-generator";
 import type { HistoryEntry, LessonPlan, ExamPlan, ExercisePlan } from "@/lib/types";
 
@@ -18,9 +19,10 @@ const TYPE_PREFIX: Record<HistoryEntry["type"], string> = {
 };
 
 async function downloadEntry(entry: HistoryEntry) {
+  const { name, school } = useProfileStore.getState();
   const doc =
     entry.type === "giao-an"
-      ? generateLessonPlanDocx(entry.data as LessonPlan)
+      ? generateLessonPlanDocx(entry.data as LessonPlan, { name, school })
       : entry.type === "de-thi"
         ? generateExamDocx(entry.data as ExamPlan)
         : generateExerciseDocx(entry.data as ExercisePlan);

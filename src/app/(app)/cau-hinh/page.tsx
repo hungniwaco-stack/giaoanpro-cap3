@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 import { useProfileStore } from "@/store/useProfileStore";
+import MauTruongForm from "@/components/MauTruongForm";
 
 export default function CauHinhPage() {
   const { name, school, setProfile } = useProfileStore();
@@ -64,6 +65,8 @@ export default function CauHinhPage() {
           {saved ? "Đã lưu" : "Lưu thay đổi"}
         </button>
       </div>
+
+      <MauTruongForm />
 
       <div className="mt-6 max-w-md rounded-2xl border border-ink/10 bg-paper-card p-6 shadow-sm">
         <p className="text-sm text-ink-muted">Trạng thái gói</p>

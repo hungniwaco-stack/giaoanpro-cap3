@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Feature = "generate" | "de-thi" | "bai-tap" | "chat";
+export type Feature = "generate" | "de-thi" | "bai-tap" | "chat" | "phan-tich";
 
 const FREE_TRIALS_PER_FEATURE = 3;
 // Paywall đặt tại điểm xuất file (Word/PPT), tách khỏi lượt xem/tạo — xem

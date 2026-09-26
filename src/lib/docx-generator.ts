@@ -42,6 +42,24 @@ export interface TeacherInfo {
   school: string;
 }
 
+const DOTS = ".......................................";
+
+function signatureTable() {
+  const col = (title: string) =>
+    new TableCell({
+      width: { size: 33, type: WidthType.PERCENTAGE },
+      borders: cellBorders,
+      children: [
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: title, bold: true })] }),
+        new Paragraph({ text: "" }), new Paragraph({ text: "" }), new Paragraph({ text: "" }),
+      ],
+    });
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({ children: [col("Duyệt của CM trường"), col("Duyệt của Tổ trưởng"), col("Giáo viên")] })],
+  });
+}
+
 export function generateLessonPlanDocx(plan: LessonPlan, teacher?: TeacherInfo): Document {
   const activityRows = plan.hoatDong.flatMap((hd) => [
     new TableRow({
@@ -81,11 +99,14 @@ export function generateLessonPlanDocx(plan: LessonPlan, teacher?: TeacherInfo):
           }),
           new Paragraph({
             children: [new TextRun({
-              text: `Trường: ${teacher?.school || "......................................."}          Giáo viên: ${teacher?.name || "......................................."}`,
+              text: `Trường: ${teacher?.school || DOTS}          Giáo viên: ${teacher?.name || DOTS}`,
             })],
           }),
           new Paragraph({
             children: [new TextRun({ text: "Ngày soạn: ..../..../........          Ngày dạy: ..../..../........" })],
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: "Tổng số tiết: ........          Tiết: ........" })],
           }),
           new Paragraph({ text: "" }),
 
@@ -109,6 +130,8 @@ export function generateLessonPlanDocx(plan: LessonPlan, teacher?: TeacherInfo):
           new Paragraph({ text: "" }),
           new Paragraph({ heading: HeadingLevel.HEADING_2, text: "IV. Điều chỉnh sau bài dạy" }),
           new Paragraph({ text: "......................................................................................................" }),
+          new Paragraph({ text: "" }),
+          signatureTable(),
         ],
       },
     ],
