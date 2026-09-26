@@ -100,3 +100,13 @@ export async function getUid() {
   const jar = await cookies();
   return jar.get("giao_an_uid")?.value ?? null;
 }
+
+// Xem trước quyết định của checkTrial mà KHÔNG trừ lượt — để giao diện hiện đúng
+// số lượt còn lại theo server, thay vì bộ đếm cục bộ có thể lệch.
+export async function getTrialStatus(ip: string) {
+  const uid = await getUid();
+  const entry = uid ? await getTrialEntry(uid) : { counts: {}, activatedUntil: null };
+  const isVip = !!entry.activatedUntil && entry.activatedUntil > Date.now();
+  const blocked = !isVip && (await getIpEntry(ip)).count >= IP_DAILY_CAP;
+  return { counts: entry.counts, blocked };
+}

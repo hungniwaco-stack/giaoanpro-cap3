@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppStore, syncTrialsFromServer } from "@/store/useAppStore";
 import { PLAN_LABEL, PLAN_PRICE_VND, type Plan } from "@/lib/plans";
 
 const PLAN_IDS: Plan[] = ["1M", "6M", "1Y"];
@@ -13,6 +13,11 @@ const ZALO_LINK = "https://zalo.me/0944851719";
 
 export default function ActivationModal({ onClose }: { onClose: () => void }) {
   const activate = useAppStore((s) => s.activate);
+
+  // Modal mở ra thường do server báo hết lượt — cập nhật số lượt hiển thị cho khớp.
+  useEffect(() => {
+    syncTrialsFromServer();
+  }, []);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

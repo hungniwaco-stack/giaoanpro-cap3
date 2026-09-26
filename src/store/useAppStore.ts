@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 export type Feature = "generate" | "de-thi" | "bai-tap" | "chat" | "phan-tich";
 
 const FREE_TRIALS_PER_FEATURE = 3;
+const FEATURES: Feature[] = ["generate", "de-thi", "bai-tap", "chat", "phan-tich"];
 // Paywall đặt tại điểm xuất file (Word/PPT), tách khỏi lượt xem/tạo — xem
 // SKILL.md audit UX: giáo viên cần thấy đủ giá trị trước khi gặp bức tường phí.
 const FREE_EXPORTS_PER_FEATURE = 1;
@@ -14,6 +15,7 @@ interface AppState {
   isVip: boolean;
   vipExpiresAt: number | null;
   useTrial: (feature: Feature) => void;
+  syncTrials: (counts: Partial<Record<Feature, number>>, blocked: boolean) => void;
   useExport: (feature: Feature) => void;
   activate: (expiresAt: number) => void;
   trialsLeft: (feature: Feature) => number;
@@ -36,6 +38,12 @@ export const useAppStore = create<AppState>()(
         set((s) => ({ trialsUsed: { ...s.trialsUsed, [feature]: (s.trialsUsed[feature] ?? 0) + 1 } })),
       useExport: (feature) =>
         set((s) => ({ exportsUsed: { ...s.exportsUsed, [feature]: (s.exportsUsed[feature] ?? 0) + 1 } })),
+      syncTrials: (counts, blocked) =>
+        set({
+          trialsUsed: blocked
+            ? Object.fromEntries(FEATURES.map((f) => [f, FREE_TRIALS_PER_FEATURE]))
+            : counts,
+        }),
       activate: (expiresAt) => set({ isVip: true, vipExpiresAt: expiresAt }),
       trialsLeft: (feature) => Math.max(0, FREE_TRIALS_PER_FEATURE - (get().trialsUsed[feature] ?? 0)),
       canGenerate: (feature) => {
@@ -63,5 +71,17 @@ export const useAppStore = create<AppState>()(
     }
   )
 );
+
+// Server là nguồn đúng về lượt dùng thử; ghi đè bộ đếm cục bộ bằng số của server.
+export async function syncTrialsFromServer() {
+  try {
+    const res = await fetch("/api/trial", { cache: "no-store" });
+    if (!res.ok) return;
+    const { counts, blocked } = await res.json();
+    useAppStore.getState().syncTrials(counts ?? {}, !!blocked);
+  } catch {
+    // mất mạng: giữ nguyên số cục bộ
+  }
+}
 
 export { FREE_TRIALS_PER_FEATURE, FREE_EXPORTS_PER_FEATURE };

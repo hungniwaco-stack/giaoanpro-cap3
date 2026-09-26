@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import TrialSync from "@/components/TrialSync";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex">
+      <TrialSync />
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="min-w-0 flex-1">
