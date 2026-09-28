@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Literata, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
+import RefCapture from "@/components/RefCapture";
 
 const literata = Literata({
   variable: "--font-literata",
@@ -37,7 +38,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="vi"
       className={`${literata.variable} ${beVietnam.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-paper font-sans text-ink">{children}</body>
+      <body className="min-h-full bg-paper font-sans text-ink">
+        <RefCapture />
+        {children}
+      </body>
     </html>
   );
 }

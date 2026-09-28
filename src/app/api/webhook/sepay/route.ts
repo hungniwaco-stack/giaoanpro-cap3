@@ -4,6 +4,7 @@ import { redis } from "@/lib/redis";
 import { activateUid, tryRedeemCode } from "@/lib/trial-guard";
 import { sendActivationEmail } from "@/lib/email";
 import { PLAN_DAYS } from "@/lib/plans";
+import { recordCommission } from "@/lib/affiliate";
 
 // SePay gọi endpoint này mỗi khi phát hiện giao dịch trên tài khoản ngân hàng
 // đã liên kết. Xác thực bằng header Authorization: Apikey <SEPAY_WEBHOOK_API_KEY>
@@ -49,6 +50,13 @@ export async function POST(req: NextRequest) {
   await tryRedeemCode(order.refCode, order.uid);
   await activateUid(order.uid, Date.now() + PLAN_DAYS[order.plan] * 24 * 60 * 60 * 1000);
   await markOrderPaid(order.refCode);
+
+  // Ghi hoa hồng CTV sau khi đã kích hoạt xong — lỗi ở đây không được ảnh hưởng khách.
+  try {
+    await recordCommission(order);
+  } catch (err) {
+    console.error(`Ghi hoa hồng affiliate cho đơn ${order.refCode} thất bại — cần ghi tay:`, err);
+  }
 
   try {
     await sendActivationEmail(order.email, order.refCode, order.plan);

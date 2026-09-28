@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
 import { createOrder } from "@/lib/orders";
 import { PLAN_DAYS, type Plan } from "@/lib/plans";
+import { resolveOrderAffiliate } from "@/lib/affiliate";
 
 const PHONE_RE = /^0\d{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,7 +29,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const order = await createOrder(uid, phone.trim(), email.trim(), plan as Plan);
+    // Lỗi tra cứu affiliate không được làm hỏng việc đặt hàng.
+    const affCode = await resolveOrderAffiliate(email.trim(), jar.get("gap_ref")?.value).catch(() => null);
+    const order = await createOrder(uid, phone.trim(), email.trim(), plan as Plan, affCode ?? undefined);
 
     const bankAccount = process.env.SEPAY_ACCOUNT_NUMBER ?? "";
     const bankCode = process.env.SEPAY_BANK_CODE ?? "";

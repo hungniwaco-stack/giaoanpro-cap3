@@ -14,6 +14,7 @@ export default function Footer() {
         <Link href="/dieu-khoan" className="hover:text-pine-dark">Điều khoản sử dụng</Link>
         <Link href="/bao-mat" className="hover:text-pine-dark">Chính sách bảo mật</Link>
         <Link href="/hoan-tien" className="hover:text-pine-dark">Chính sách hoàn tiền</Link>
+        <Link href="/doi-tac" className="hover:text-pine-dark">Cộng tác viên</Link>
         <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-pine-dark">{SUPPORT_EMAIL}</a>
         <a href={ZALO_LINK} target="_blank" rel="noopener noreferrer" className="hover:text-pine-dark">Zalo hỗ trợ</a>
       </nav>

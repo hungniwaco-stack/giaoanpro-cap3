@@ -107,6 +107,8 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
             <Link href="/bao-mat" className="hover:text-pine-dark">Bảo mật</Link>
             <span>·</span>
             <Link href="/hoan-tien" className="hover:text-pine-dark">Hoàn tiền</Link>
+            <span>·</span>
+            <Link href="/doi-tac" className="hover:text-pine-dark">Cộng tác viên</Link>
           </div>
         </div>
       </aside>

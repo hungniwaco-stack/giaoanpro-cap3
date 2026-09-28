@@ -10,6 +10,7 @@ export interface Order {
   plan: Plan;
   amount: number;
   status: "pending" | "paid";
+  affCode?: string;
   createdAt: number;
   paidAt?: number;
 }
@@ -25,7 +26,13 @@ function genRefCode(): string {
   return "GA" + randomBytes(3).toString("hex").toUpperCase();
 }
 
-export async function createOrder(uid: string, phone: string, email: string, plan: Plan): Promise<Order> {
+export async function createOrder(
+  uid: string,
+  phone: string,
+  email: string,
+  plan: Plan,
+  affCode?: string
+): Promise<Order> {
   const refCode = genRefCode();
   const order: Order = {
     refCode,
@@ -35,6 +42,7 @@ export async function createOrder(uid: string, phone: string, email: string, pla
     plan,
     amount: PLAN_PRICE_VND[plan],
     status: "pending",
+    ...(affCode ? { affCode } : {}),
     createdAt: Date.now(),
   };
   await redis.set(`order:${refCode}`, order, { ex: ORDER_TTL_S });
