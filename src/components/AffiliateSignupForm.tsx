@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AFFILIATE_LIMITS as L } from "@/lib/affiliate-limits";
 
 const inputCls =
@@ -78,6 +79,13 @@ export default function AffiliateSignupForm() {
         Tên chủ tài khoản
         <input name="accountName" required maxLength={L.name} className={inputCls} />
       </label>
+      <p className="mt-4 text-xs text-ink-muted">
+        Bằng việc đăng ký, bạn đồng ý với{" "}
+        <Link href="/doi-tac/dieu-khoan" className="text-pine underline">
+          Điều khoản chương trình cộng tác viên
+        </Link>
+        .
+      </p>
       {error && <p className="mt-3 text-sm text-seal">{error}</p>}
       <button
         type="submit"
