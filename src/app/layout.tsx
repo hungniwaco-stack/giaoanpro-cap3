@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "AI Giáo Án Pro — Soạn giáo án THPT chuẩn 5512 bằng AI",
   description:
-    "Tạo giáo án THPT lớp 10-12 chuẩn Công văn 5512, sách Kết nối tri thức, xuất thẳng file Word chỉ trong vài giây. Dùng thử miễn phí 2 lượt.",
+    "Tạo giáo án THPT lớp 10-12 chuẩn Công văn 5512, sách Kết nối tri thức, xuất thẳng file Word chỉ trong vài giây. Dùng thử miễn phí 3 lượt mỗi chức năng.",
   keywords: ["giáo án AI", "soạn giáo án", "công văn 5512", "giáo án THPT", "kết nối tri thức"],
   openGraph: {
     title: "AI Giáo Án Pro — Cấp 3",
