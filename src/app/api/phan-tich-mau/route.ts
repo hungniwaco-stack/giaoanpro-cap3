@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import mammoth from "mammoth";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { askAI, aiConfigured } from "@/lib/ai";
 import { MAU_LIMITS } from "@/lib/mau-truong";
 
 const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -33,8 +33,8 @@ function detectKind(file: File): "docx" | "pdf" | "image" | null {
 }
 
 export async function POST(req: NextRequest) {
-  if (!process.env.GEMINI_API_KEY) {
-    return NextResponse.json({ error: "Server chưa cấu hình GEMINI_API_KEY" }, { status: 500 });
+  if (!aiConfigured()) {
+    return NextResponse.json({ error: "Server chưa cấu hình GEMINI_API_KEY hoặc DEEPSEEK_API_KEY" }, { status: 500 });
   }
 
   try {
@@ -61,24 +61,28 @@ export async function POST(req: NextRequest) {
 
     const buf = Buffer.from(await file.arrayBuffer());
     let filePart;
+    let docText: string | null = null;
     if (kind === "docx") {
       const text = (await mammoth.extractRawText({ buffer: buf })).value.trim();
       if (text.length < 50) {
         return NextResponse.json({ error: "Không đọc được nội dung trong file Word này" }, { status: 422 });
       }
-      filePart = { text: `Nội dung tài liệu:\n${text.slice(0, MAX_DOCX_CHARS)}` };
+      docText = `Nội dung tài liệu:\n${text.slice(0, MAX_DOCX_CHARS)}`;
+      filePart = { text: docText };
     } else {
       const mimeType = kind === "pdf" ? "application/pdf" : file.type;
       filePart = { inlineData: { mimeType, data: buf.toString("base64") } };
     }
 
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: [{ role: "user", parts: [{ text: PROMPT }, filePart] }],
-      config: { responseMimeType: "application/json", responseSchema },
+    // DeepSeek chỉ đọc được văn bản: PDF/ảnh không dự phòng được, chỉ file Word.
+    const text = await askAI({
+      geminiContents: [{ role: "user", parts: [{ text: PROMPT }, filePart] }],
+      messages: docText ? [{ role: "user", content: `${PROMPT}
+
+${docText}` }] : [],
+      responseSchema,
+      deepseekOk: docText !== null,
     });
-    const text = response.text;
-    if (!text) throw new Error("Gemini không trả về nội dung");
 
     const parsed = JSON.parse(text) as { canCu?: string; huongDan?: string };
     const huongDan = (parsed.huongDan ?? "").trim().slice(0, MAU_LIMITS.phanTich);

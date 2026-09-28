@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { askAI, aiConfigured } from "@/lib/ai";
 import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const SYSTEM_INSTRUCTION = `Bạn là trợ lý AI dành cho giáo viên THPT Việt Nam. Trả lời ngắn gọn, đúng chuyên môn sư phạm, bằng tiếng Việt. Có thể gợi ý hoạt động dạy học, giải thích khái niệm, hoặc góp ý cải thiện nội dung giáo viên đưa ra. Được dùng cú pháp Markdown (tiêu đề #, in đậm **, gạch đầu dòng) để trình bày rõ ràng. ${LATEX_INSTRUCTION}`;
@@ -9,8 +9,8 @@ const MAX_MESSAGES = 20;
 const MAX_MESSAGE_LEN = 2000;
 
 export async function POST(req: NextRequest) {
-  if (!process.env.GEMINI_API_KEY) {
-    return NextResponse.json({ error: "Server chưa cấu hình GEMINI_API_KEY" }, { status: 500 });
+  if (!aiConfigured()) {
+    return NextResponse.json({ error: "Server chưa cấu hình GEMINI_API_KEY hoặc DEEPSEEK_API_KEY" }, { status: 500 });
   }
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -34,17 +34,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: messages.map((m: { role: "user" | "model"; content: string }) => ({
-        role: m.role,
-        parts: [{ text: m.content }],
-      })),
-      config: { systemInstruction: SYSTEM_INSTRUCTION },
+    const text = await askAI({
+      system: SYSTEM_INSTRUCTION,
+      messages: messages.map((m: { role: "user" | "model"; content: string }) => ({ role: m.role, content: m.content })),
     });
-
-    const text = response.text;
-    if (!text) throw new Error("Gemini không trả về nội dung");
 
     await consumeTrial(trial.uid, trial.ip, "chat");
     return NextResponse.json({ reply: text });

@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <li>Lịch sử các giáo án/đề thi/bài tập bạn đã tạo, lưu tối đa khoảng 400 ngày để bạn xem lại trong mục &quot;Lịch sử&quot;.</li>
         <li>Tên và tên trường bạn nhập ở mục Hồ sơ (để in vào file Word) — chỉ lưu trên trình duyệt của bạn, không gửi lên máy chủ.</li>
         <li>Địa chỉ IP, dùng để giới hạn số lượt dùng thử theo ngày và chống lạm dụng; chỉ lưu tối đa khoảng 2 ngày.</li>
-        <li>Tài liệu bạn đính kèm ở mục Cấu Hình (công văn, phụ lục, mẫu giáo án của Sở/trường): file được gửi đến Google Gemini để đọc và tóm tắt, chúng tôi không lưu file trên máy chủ. Tên file và bản tóm tắt chỉ lưu trên trình duyệt của bạn.</li>
+        <li>Tài liệu bạn đính kèm ở mục Cấu Hình (công văn, phụ lục, mẫu giáo án của Sở/trường): file được gửi đến Google Gemini để đọc và tóm tắt (nếu Gemini tạm không dùng được, nội dung chữ của file Word có thể được gửi đến DeepSeek thay thế; file PDF và ảnh chỉ gửi đến Gemini), chúng tôi không lưu file trên máy chủ. Tên file và bản tóm tắt chỉ lưu trên trình duyệt của bạn.</li>
         <li>Nếu bạn đăng ký làm cộng tác viên: họ tên, email, tên ngân hàng, số tài khoản, tên chủ tài khoản, mã cộng tác viên và lịch sử hoa hồng.</li>
         <li>Cookie giới thiệu lưu mã cộng tác viên trong 30 ngày khi bạn vào từ link giới thiệu, dùng để ghi nhận hoa hồng.</li>
       </ul>
@@ -26,13 +26,14 @@ export default function PrivacyPage() {
 
       <h2>2. Cách dữ liệu được sử dụng</h2>
       <p>
-        Nội dung bạn nhập được gửi đến Google Gemini API để sinh nội dung. Email dùng để gửi mã
-        kích hoạt sau khi thanh toán (qua Resend), không dùng cho mục đích quảng cáo. Số điện thoại
-        chỉ dùng để đối chiếu khi bạn cần hỗ trợ hoặc yêu cầu hoàn tiền.
+        Nội dung bạn nhập được gửi đến Google Gemini API để sinh nội dung; khi Gemini tạm không
+        khả dụng, hệ thống có thể dùng DeepSeek API dự phòng. Email dùng để gửi mã kích hoạt sau
+        khi thanh toán (qua Resend), không dùng cho mục đích quảng cáo. Số điện thoại chỉ dùng để
+        đối chiếu khi bạn cần hỗ trợ hoặc yêu cầu hoàn tiền.
       </p>
       <p>
-        Nếu bạn đính kèm tài liệu, nội dung tài liệu cũng được gửi đến Google Gemini API để phân
-        tích. Vui lòng không đính kèm tài liệu chứa thông tin cá nhân của học sinh hoặc đồng nghiệp.
+        Nếu bạn đính kèm tài liệu, nội dung tài liệu cũng được gửi đến Google Gemini API (hoặc DeepSeek
+        API dự phòng, chỉ với file Word) để phân tích. Vui lòng không đính kèm tài liệu chứa thông tin cá nhân của học sinh hoặc đồng nghiệp.
       </p>
       <p>
         Email khi thanh toán còn được dùng để xác định khách thuộc cộng tác viên nào nếu khách vào
@@ -46,7 +47,7 @@ export default function PrivacyPage() {
 
       <h2>3. Chia sẻ với bên thứ ba</h2>
       <p>
-        Dữ liệu được xử lý qua các dịch vụ: Google Gemini API (sinh nội dung AI), Resend (gửi email
+        Dữ liệu được xử lý qua các dịch vụ: Google Gemini API (sinh nội dung AI), DeepSeek API (dịch vụ AI dự phòng khi Gemini không khả dụng), Resend (gửi email
         kích hoạt và email cộng tác viên), Upstash Redis (lưu trữ dữ liệu tài khoản, lịch sử và
         thông tin cộng tác viên), và SePay (xác nhận giao
         dịch chuyển khoản ngân hàng). Chúng tôi không bán hoặc chia sẻ dữ liệu cho bên thứ ba vì mục

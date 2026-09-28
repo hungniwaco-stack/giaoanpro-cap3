@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import { checkTrial, consumeTrial } from "@/lib/trial-guard";
 import { addHistoryEntry } from "@/lib/history-store";
-import { ai, GEMINI_MODEL } from "@/lib/gemini";
+import { askAI, aiConfigured } from "@/lib/ai";
 import { LATEX_INSTRUCTION } from "@/lib/prompt-fragments";
 
 const responseSchema = {
@@ -45,8 +45,8 @@ Chỉ trả về JSON đúng theo schema đã cho, không thêm markdown, không
 }
 
 export async function POST(req: NextRequest) {
-  if (!process.env.GEMINI_API_KEY) {
-    return NextResponse.json({ error: "Server chưa cấu hình GEMINI_API_KEY" }, { status: 500 });
+  if (!aiConfigured()) {
+    return NextResponse.json({ error: "Server chưa cấu hình GEMINI_API_KEY hoặc DEEPSEEK_API_KEY" }, { status: 500 });
   }
 
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -71,14 +71,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: buildPrompt(monHoc, khoiLop, tenBai, count, nguLieu),
-      config: { responseMimeType: "application/json", responseSchema },
-    });
-
-    const text = response.text;
-    if (!text) throw new Error("Gemini không trả về nội dung");
+    const text = await askAI({ messages: [{ role: "user", content: buildPrompt(monHoc, khoiLop, tenBai, count, nguLieu) }], responseSchema });
 
     const result = { ...JSON.parse(text), tenBai, monHoc, khoiLop };
     // Chỉ tiêu lượt dùng thử SAU khi chắc chắn có kết quả hợp lệ — JSON lỗi
