@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Chính sách bảo mật — Giáo �
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Chính sách bảo mật" updatedAt="28/09/2026">
+    <LegalPage title="Chính sách bảo mật" updatedAt="10/10/2026">
       <h2>1. Dữ liệu chúng tôi thu thập</h2>
       <ul>
         <li>Nội dung bạn nhập để tạo giáo án, đề thi, bài tập (môn học, khối lớp, tên bài).</li>
@@ -14,6 +14,7 @@ export default function PrivacyPage() {
         <li>Một mã định danh ẩn danh lưu trong cookie trình duyệt — không cần đăng ký tài khoản.</li>
         <li>Lịch sử các giáo án/đề thi/bài tập bạn đã tạo, lưu tối đa khoảng 400 ngày để bạn xem lại trong mục &quot;Lịch sử&quot;.</li>
         <li>Tên và tên trường bạn nhập ở mục Hồ sơ (để in vào file Word) — chỉ lưu trên trình duyệt của bạn, không gửi lên máy chủ.</li>
+        <li>Góp ý bạn tự nguyện gửi sau khi tạo giáo án (lựa chọn, lời nhắn tuỳ chọn và khối lớp, môn học) — lưu ẩn danh, không gắn với mã định danh hay email của bạn, chỉ dùng để cải thiện chất lượng giáo án.</li>
         <li>Địa chỉ IP, dùng để giới hạn số lượt dùng thử theo ngày và chống lạm dụng; chỉ lưu tối đa khoảng 2 ngày.</li>
         <li>Tài liệu bạn đính kèm ở mục Cấu Hình (công văn, phụ lục, mẫu giáo án của Sở/trường): file được gửi đến Google Gemini để đọc và tóm tắt (nếu Gemini tạm không dùng được, nội dung chữ của file Word có thể được gửi đến DeepSeek thay thế; file PDF và ảnh chỉ gửi đến Gemini), chúng tôi không lưu file trên máy chủ. Tên file và bản tóm tắt chỉ lưu trên trình duyệt của bạn.</li>
         <li>Nếu bạn đăng ký làm cộng tác viên: họ tên, email, tên ngân hàng, số tài khoản, tên chủ tài khoản, mã cộng tác viên và lịch sử hoa hồng.</li>

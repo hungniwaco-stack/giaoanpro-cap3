@@ -11,6 +11,7 @@ import { toMauGuide } from "@/lib/mau-truong";
 import type { LessonPlan } from "@/lib/types";
 import ActivationModal from "@/components/ActivationModal";
 import ResultPanel from "@/components/ResultPanel";
+import FeedbackPrompt from "@/components/FeedbackPrompt";
 import EmptyResult from "@/components/EmptyResult";
 import CharCounter from "@/components/CharCounter";
 
@@ -33,6 +34,7 @@ export default function GiaoAnPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [lastPlan, setLastPlan] = useState<LessonPlan | null>(null);
+  const [planKey, setPlanKey] = useState(0);
 
   async function handleGenerate() {
     if (!tenBai.trim()) {
@@ -63,6 +65,7 @@ export default function GiaoAnPage() {
 
       const plan = data as LessonPlan;
       setLastPlan(plan);
+      setPlanKey((k) => k + 1);
       addEntry("giao-an", plan.tenBai, plan);
       if (!isVip) useTrial("generate");
     } catch (e) {
@@ -184,17 +187,20 @@ export default function GiaoAnPage() {
         </div>
 
         {lastPlan ? (
-          <ResultPanel
-            title="Chi Tiết Giáo Án"
-            markdown={lessonPlanToMarkdown(lastPlan)}
-            onDownloadDocx={() => handleExport(() => downloadDocx(lastPlan))}
-            onDownloadPptx={() =>
-              handleExport(() =>
-                downloadPptx(generateLessonPlanPptx(lastPlan), `Giao-an-${lastPlan.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)
-              )
-            }
-            locked={!isVip && !canExport("generate")}
-          />
+          <div>
+            <ResultPanel
+              title="Chi Tiết Giáo Án"
+              markdown={lessonPlanToMarkdown(lastPlan)}
+              onDownloadDocx={() => handleExport(() => downloadDocx(lastPlan))}
+              onDownloadPptx={() =>
+                handleExport(() =>
+                  downloadPptx(generateLessonPlanPptx(lastPlan), `Giao-an-${lastPlan.tenBai.replace(/[^\p{L}\p{N}]+/gu, "-")}`)
+                )
+              }
+              locked={!isVip && !canExport("generate")}
+            />
+            <FeedbackPrompt key={planKey} context={`Lớp ${khoiLop} - ${monHoc}`} />
+          </div>
         ) : (
           <EmptyResult text="Điền thông tin bên trái và bấm Soạn giáo án để xem kết quả tại đây." />
         )}
