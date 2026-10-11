@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/store/useAppStore";
 import { PLAN_LABEL, PLAN_PRICE_VND, type Plan } from "@/lib/plans";
+import { trackPurchase } from "@/lib/pixel";
 
 const PLANS: Plan[] = ["1M", "6M", "1Y"];
 
@@ -28,6 +29,7 @@ export default function NangCapPage() {
   const [order, setOrder] = useState<OrderInfo | null>(null);
   const [paid, setPaid] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const trackedRef = useRef(false);
 
   async function handleCreateOrder() {
     setError(null);
@@ -87,6 +89,12 @@ export default function NangCapPage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order, paid]);
+
+  useEffect(() => {
+    if (!paid || !order || trackedRef.current) return;
+    trackedRef.current = true;
+    trackPurchase(`cap3_${plan}`, order.amount);
+  }, [paid, order, plan]);
 
   if (paid) {
     return (
