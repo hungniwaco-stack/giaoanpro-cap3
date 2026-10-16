@@ -46,7 +46,7 @@ export default function AffiliatePage() {
             <li>Khách bấm link giới thiệu của bạn và thanh toán trong vòng 30 ngày là được tính cho bạn.</li>
             <li>Khách đã được tính cho bạn thì mọi lần thanh toán sau (gia hạn, đổi gói) đều có hoa hồng, không giới hạn thời gian.</li>
             <li>Hoa hồng được ghi nhận ngay khi thanh toán thành công và chi trả bằng chuyển khoản tới tài khoản bạn đăng ký.</li>
-            <li>Đơn do chính bạn thanh toán bằng email của bạn không được tính hoa hồng.</li>
+            <li>Đơn do chính bạn thanh toán không được tính hoa hồng.</li>
           </ul>
 
           <h2 className="mt-10 mb-3 font-display text-lg font-semibold text-ink">Đăng ký</h2>

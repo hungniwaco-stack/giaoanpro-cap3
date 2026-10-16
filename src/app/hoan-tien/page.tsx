@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Chính sách hoàn tiền — Giáo 
 
 export default function RefundPage() {
   return (
-    <LegalPage title="Chính sách hoàn tiền" updatedAt="07/09/2026">
+    <LegalPage title="Chính sách hoàn tiền" updatedAt="16/10/2026">
       <h2>1. Điều kiện được hoàn tiền</h2>
       <p>Bạn được hoàn 100% số tiền đã thanh toán nếu đáp ứng đủ cả hai điều kiện:</p>
       <ul>
@@ -18,9 +18,7 @@ export default function RefundPage() {
 
       <h2>2. Cách yêu cầu hoàn tiền</h2>
       <p>
-        Liên hệ Zalo/điện thoại 0944 851719 hoặc email hungniwaco@gmail.com, kèm mã đơn hàng (bắt
-        đầu bằng &quot;GA&quot;, có trong email xác nhận kích hoạt) hoặc số điện thoại/email đã
-        đăng ký để đối chiếu.
+        Liên hệ Zalo/điện thoại 0944 851719 hoặc email hungniwaco@gmail.com, kèm mã đơn hàng (bắt đầu bằng &quot;GA&quot;, hiện trên màn hình sau khi thanh toán và có trong nội dung chuyển khoản) hoặc ảnh chụp biên lai chuyển khoản để đối chiếu.
       </p>
 
       <h2>3. Thời gian xử lý</h2>

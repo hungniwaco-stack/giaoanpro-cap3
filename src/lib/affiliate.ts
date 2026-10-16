@@ -79,8 +79,8 @@ export async function registerAffiliate(
 
 // Khách đã gắn với CTV nào ở lần mua đầu thì mọi lần mua sau (gia hạn, đổi gói)
 // đều thuộc CTV đó — đây là "trọn đời". Chưa gắn thì dùng mã từ cookie giới thiệu.
-export async function resolveOrderAffiliate(email: string, cookieCode?: string): Promise<string | null> {
-  const bound = await redis.get<string>(`aff:cust:${email.toLowerCase()}`);
+export async function resolveOrderAffiliate(customerKey: string, cookieCode?: string): Promise<string | null> {
+  const bound = await redis.get<string>(`aff:cust:${customerKey.toLowerCase()}`);
   if (bound) return bound;
   if (cookieCode && CODE_RE.test(cookieCode) && (await getAffiliate(cookieCode))) return cookieCode;
   return null;
@@ -91,19 +91,20 @@ export async function resolveOrderAffiliate(email: string, cookieCode?: string):
 export async function recordCommission(order: Order) {
   if (!order.affCode) return;
   const aff = await getAffiliate(order.affCode);
-  const customerEmail = order.email.toLowerCase();
-  if (!aff || aff.email === customerEmail) return; // không tính đơn tự giới thiệu
+  // Đơn không còn thu email: khách được gắn theo uid (cookie trình duyệt). Đơn cũ vẫn gắn theo email.
+  const customerKey = (order.email ?? order.uid).toLowerCase();
+  if (!aff || (order.email && aff.email === customerKey)) return; // không tính đơn tự giới thiệu
 
   // Chống ghi trùng nếu webhook bị gọi lại cho cùng một đơn.
   if (!(await redis.set(`aff:done:${order.refCode}`, 1, { nx: true }))) return;
-  await redis.set(`aff:cust:${customerEmail}`, aff.code, { nx: true });
+  await redis.set(`aff:cust:${customerKey}`, aff.code, { nx: true });
 
   const entry: Commission = {
     orderRef: order.refCode,
     plan: order.plan,
     amount: order.amount,
     commission: commissionFor(order.amount),
-    customer: maskEmail(order.email),
+    customer: order.email ? maskEmail(order.email) : `Khách ···${order.uid.slice(-4)}`,
     at: Date.now(),
   };
   await redis.rpush(`aff:comm:${aff.code}`, entry);

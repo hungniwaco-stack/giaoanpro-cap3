@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { extractRefCode, getOrder, markOrderPaid } from "@/lib/orders";
 import { redis } from "@/lib/redis";
 import { activateUid, tryRedeemCode } from "@/lib/trial-guard";
-import { sendActivationEmail } from "@/lib/email";
 import { PLAN_DAYS } from "@/lib/plans";
 import { recordCommission } from "@/lib/affiliate";
 
@@ -56,12 +55,6 @@ export async function POST(req: NextRequest) {
     await recordCommission(order);
   } catch (err) {
     console.error(`Ghi hoa hồng affiliate cho đơn ${order.refCode} thất bại — cần ghi tay:`, err);
-  }
-
-  try {
-    await sendActivationEmail(order.email, order.refCode, order.plan);
-  } catch (err) {
-    console.error("Gửi email kích hoạt thất bại:", err);
   }
 
   return NextResponse.json({ ok: true });

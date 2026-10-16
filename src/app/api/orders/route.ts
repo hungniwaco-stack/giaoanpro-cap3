@@ -5,20 +5,11 @@ import { createOrder } from "@/lib/orders";
 import { PLAN_DAYS, type Plan } from "@/lib/plans";
 import { resolveOrderAffiliate } from "@/lib/affiliate";
 
-const PHONE_RE = /^0\d{9}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export async function POST(req: NextRequest) {
-  const { phone, email, plan } = await req.json();
+  const { plan } = await req.json();
 
   if (typeof plan !== "string" || !(plan in PLAN_DAYS)) {
     return NextResponse.json({ error: "Gói không hợp lệ" }, { status: 400 });
-  }
-  if (typeof phone !== "string" || !PHONE_RE.test(phone.trim())) {
-    return NextResponse.json({ error: "Số điện thoại không hợp lệ" }, { status: 400 });
-  }
-  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
-    return NextResponse.json({ error: "Email không hợp lệ" }, { status: 400 });
   }
 
   const jar = await cookies();
@@ -30,8 +21,8 @@ export async function POST(req: NextRequest) {
 
   try {
     // Lỗi tra cứu affiliate không được làm hỏng việc đặt hàng.
-    const affCode = await resolveOrderAffiliate(email.trim(), jar.get("gap_ref")?.value).catch(() => null);
-    const order = await createOrder(uid, phone.trim(), email.trim(), plan as Plan, affCode ?? undefined);
+    const affCode = await resolveOrderAffiliate(uid, jar.get("gap_ref")?.value).catch(() => null);
+    const order = await createOrder(uid, plan as Plan, affCode ?? undefined);
 
     const bankAccount = process.env.SEPAY_ACCOUNT_NUMBER ?? "";
     const bankCode = process.env.SEPAY_BANK_CODE ?? "";

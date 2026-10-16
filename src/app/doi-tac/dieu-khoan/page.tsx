@@ -11,7 +11,7 @@ const vnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`;
 
 export default function AffiliateTermsPage() {
   return (
-    <LegalPage title="Điều khoản chương trình cộng tác viên" updatedAt="28/09/2026">
+    <LegalPage title="Điều khoản chương trình cộng tác viên" updatedAt="16/10/2026">
       <h2>1. Chương trình</h2>
       <p>
         Chương trình cộng tác viên của Giáo Án Pro Cấp 3 (cap3.giaoanpro.com) cho phép bạn giới
@@ -52,8 +52,8 @@ export default function AffiliateTermsPage() {
       <h2>4. Cách xác định khách được giới thiệu</h2>
       <ul>
         <li>Khách bấm link giới thiệu của bạn rồi thanh toán trong vòng 30 ngày sẽ được tính cho bạn. Việc này dựa vào cookie trên trình duyệt của khách — nếu khách xoá cookie hoặc đổi trình duyệt/thiết bị trước khi thanh toán, chúng tôi không ghi nhận được.</li>
-        <li>Khách đã được tính cho một cộng tác viên (theo email dùng khi thanh toán) thì luôn thuộc cộng tác viên đó; link của người khác bấm sau không thay đổi điều này.</li>
-        <li>Đơn thanh toán bằng chính email của bạn không được tính hoa hồng. Đơn chưa thanh toán thành công cũng không được tính.</li>
+        <li>Khách đã được tính cho một cộng tác viên (theo trình duyệt khách dùng khi thanh toán) thì luôn thuộc cộng tác viên đó trên trình duyệt ấy; link của người khác bấm sau không thay đổi điều này.</li>
+        <li>Đơn do chính bạn thanh toán không được tính hoa hồng. Đơn chưa thanh toán thành công cũng không được tính.</li>
         <li>Số liệu trên hệ thống của chúng tôi là căn cứ duy nhất để tính hoa hồng.</li>
       </ul>
 
@@ -84,7 +84,7 @@ export default function AffiliateTermsPage() {
         <li>Gửi tin nhắn hàng loạt khi chưa được người nhận đồng ý hoặc đăng link tràn lan để quấy rối.</li>
         <li>Quảng cáo sai sự thật về dịch vụ, ví dụ hứa hẹn những điều dịch vụ không có.</li>
         <li>Giả danh Giáo Án Pro, cơ quan giáo dục hoặc người khác.</li>
-        <li>Tự tạo đơn ảo, dùng email hoặc tài khoản giả để hưởng hoa hồng.</li>
+        <li>Tự tạo đơn ảo hoặc dùng tài khoản giả để hưởng hoa hồng.</li>
         <li>Can thiệp vào cách hệ thống ghi nhận (giả mạo mã giới thiệu, cookie...).</li>
       </ul>
       <p>
@@ -97,8 +97,7 @@ export default function AffiliateTermsPage() {
         Chúng tôi lưu họ tên, email và thông tin tài khoản ngân hàng của bạn chỉ để vận hành chương
         trình: gửi link, đối soát và chi trả hoa hồng. Chúng tôi không bán hay chia sẻ dữ liệu này
         cho bên thứ ba, trừ các nhà cung cấp hạ tầng vận hành hệ thống (lưu trữ dữ liệu, gửi email)
-        và trường hợp pháp luật yêu cầu. Trang số liệu của bạn chỉ hiển thị email của khách dưới
-        dạng che một phần; bạn không được dùng thông tin này để tìm cách liên lạc với khách.
+        và trường hợp pháp luật yêu cầu. Trang số liệu của bạn chỉ hiển thị mã rút gọn của khách, không có thông tin liên hệ; bạn không được dùng thông tin này để tìm cách liên lạc với khách.
       </p>
       <p>
         Bạn có thể yêu cầu xoá thông tin và ngừng tham gia bất cứ lúc nào (mục 11). Số dư đã ghi

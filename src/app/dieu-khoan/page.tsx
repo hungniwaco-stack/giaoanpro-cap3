@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Điều khoản sử dụng — Giá
 
 export default function TermsPage() {
   return (
-    <LegalPage title="Điều khoản sử dụng" updatedAt="07/09/2026">
+    <LegalPage title="Điều khoản sử dụng" updatedAt="16/10/2026">
       <h2>1. Dịch vụ cung cấp</h2>
       <p>
         Giáo Án Pro Cấp 3 là công cụ hỗ trợ giáo viên THPT soạn giáo án, ra đề, tạo bài tập dựa
@@ -31,8 +31,7 @@ export default function TermsPage() {
       <h2>4. Kích hoạt và thanh toán</h2>
       <p>
         Thanh toán qua chuyển khoản VietQR. Sau khi thanh toán thành công, hệ thống tự động kích
-        hoạt ngay trên trình duyệt bạn đang dùng, đồng thời gửi mã kích hoạt qua email để bạn dùng
-        thêm trên tối đa 3 thiết bị khác. Không chia sẻ mã kích hoạt cho người ngoài.
+        hoạt ngay trên trình duyệt bạn đang dùng, đồng thời hiện mã kích hoạt ngay trên màn hình để bạn dùng thêm trên tối đa 3 thiết bị khác — hãy lưu lại mã này. Không chia sẻ mã kích hoạt cho người ngoài.
       </p>
 
       <h2>5. Quyền sở hữu nội dung</h2>

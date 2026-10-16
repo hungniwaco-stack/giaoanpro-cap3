@@ -5,8 +5,9 @@ import { PLAN_PRICE_VND, type Plan } from "./plans";
 export interface Order {
   refCode: string;
   uid: string;
-  phone: string;
-  email: string;
+  // Đơn cũ (trước khi bỏ bước nhập thông tin) còn lưu hai trường này; đơn mới không có.
+  phone?: string;
+  email?: string;
   plan: Plan;
   amount: number;
   status: "pending" | "paid";
@@ -28,8 +29,6 @@ function genRefCode(): string {
 
 export async function createOrder(
   uid: string,
-  phone: string,
-  email: string,
   plan: Plan,
   affCode?: string
 ): Promise<Order> {
@@ -37,8 +36,6 @@ export async function createOrder(
   const order: Order = {
     refCode,
     uid,
-    phone,
-    email,
     plan,
     amount: PLAN_PRICE_VND[plan],
     status: "pending",
